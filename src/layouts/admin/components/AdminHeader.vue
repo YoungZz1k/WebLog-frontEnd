@@ -79,6 +79,7 @@ import { useFullscreen } from '@vueuse/core'
 import { updateAdminPassword } from '@/api/admin/user'
 import { showMessage, showModel } from '@/composables/util'
 import { useRouter } from 'vue-router'
+import FormDialog from '@/components/FormDialog.vue'
 
 const router = useRouter()
 
@@ -181,6 +182,7 @@ const onSubmit = () => {
             return
         }
 
+        formDialogRef.value.showBtnLoading()
         // 调用修改用户密码接口
         updateAdminPassword(form).then((res) => {
             console.log(res)
@@ -201,7 +203,7 @@ const onSubmit = () => {
                 // 提示消息
                 showMessage(message, 'error')
             }
-        })
+        }).finally(() => formDialogRef.value.closeBtnLoading())
     })
 }
 
