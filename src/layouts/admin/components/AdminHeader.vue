@@ -55,31 +55,20 @@
     </div>
 
     <!-- 修改密码 -->
-    <el-dialog v-model="dialogVisible" title="修改密码" width="40%" :draggable="true" :close-on-click-modal="false"
-        :close-on-press-escape="false">
+    <FormDialog ref="formDialogRef" title="修改密码" destroyOnClose @submit="onSubmit">
         <el-form ref="formRef" :rules="rules" :model="form">
-            <el-form-item label="用户名" prop="username" label-width="120px">
+            <el-form-item label="用户名" prop="username" label-width="120px" size="large">
                 <!-- 输入框组件 -->
-                <el-input size="large" v-model="form.username" placeholder="请输入用户名" clearable disabled />
+                <el-input v-model="form.username" placeholder="请输入用户名" clearable disabled />
             </el-form-item>
-            <el-form-item label="新密码" prop="password" label-width="120px">
-                <el-input size="large" type="password" v-model="form.password" placeholder="请输入新密码" clearable
-                    show-password />
+            <el-form-item label="新密码" prop="password" label-width="120px" size="large">
+                <el-input type="password" v-model="form.password" placeholder="请输入新密码" clearable show-password />
             </el-form-item>
-            <el-form-item label="确认新密码" prop="rePassword" label-width="120px">
-                <el-input size="large" type="password" v-model="form.rePassword" placeholder="请确认新密码" clearable
-                    show-password />
+            <el-form-item label="确认新密码" prop="rePassword" label-width="120px" size="large">
+                <el-input type="password" v-model="form.rePassword" placeholder="请确认新密码" clearable show-password />
             </el-form-item>
         </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="onSubmit">
-                    提交
-                </el-button>
-            </span>
-        </template>
-    </el-dialog>
+    </FormDialog>
 </template>
 
 <script setup>
@@ -110,14 +99,14 @@ const handleMenuWidth = () => {
 const handleRefresh = () => location.reload()
 
 // 对话框是否显示
-const dialogVisible = ref(false)
+const formDialogRef = ref(false)
 
 // 下拉菜单事件处理
 const handleCommand = (command) => {
     // 更新密码
     if (command == 'updatePassword') {
         // 显示修改密码对话框
-        dialogVisible.value = true
+        formDialogRef.value.open()
     } else if (command == 'logout') { // 退出登录
         logout()
     }
@@ -202,7 +191,7 @@ const onSubmit = () => {
                 userStore.logout()
 
                 // 隐藏对话框
-                dialogVisible.value = false
+                formDialogRef.value.close()
 
                 // 跳转登录页
                 router.push('/login')
