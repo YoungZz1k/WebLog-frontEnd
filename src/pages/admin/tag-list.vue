@@ -5,7 +5,7 @@
             <!-- flex 布局，内容垂直居中 -->
             <div class="flex items-center">
                 <el-text>标签名称</el-text>
-                <div class="ml-3 w-52 mr-5"><el-input v-model="searchTagName" placeholder="请输入" /></div>
+                <div class="ml-3 w-52 mr-5"><el-input v-model="searchTagName" placeholder="请输入（模糊查询）" /></div>
 
                 <el-text>创建日期</el-text>
                 <div class="ml-3 w-30 mr-5">
@@ -31,7 +31,11 @@
 
             <!-- 分页列表 -->
             <el-table :data="tableData" border stripe style="width: 100%" v-loading="tableLoading">
-                <el-table-column prop="name" label="标签名称" width="180" />
+                <el-table-column prop="name" label="标签名称" width="180">
+                    <template #default="scope">
+                        <el-tag class="ml-2" type="success">{{ scope.row.name }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column label="操作">
                     <template #default="scope">
@@ -54,11 +58,21 @@
 
         </el-card>
 
-        <!-- 添加分类 -->
-        <FormDialog ref="formDialogRef" title="添加文章分类" destroyOnClose @submit="onSubmit">
-            <el-form ref="formRef" :rules="rules" :model="form">
-                <el-form-item label="分类名称" prop="name" label-width="80px" size="large">
-                    <el-input v-model="form.name" placeholder="请输入分类名称" maxlength="20" show-word-limit clearable />
+        <!-- 添加标签 -->
+        <FormDialog ref="formDialogRef" title="添加文章标签" destroyOnClose @submit="onSubmit">
+            <el-form ref="formRef" :model="form">
+                <el-form-item prop="name">
+                    <el-tag v-for="tag in dynamicTags" :key="tag" class="mx-1" closable :disable-transitions="false"
+                        @close="handleClose(tag)">
+                        {{ tag }}
+                    </el-tag>
+                    <span class="w-20">
+                        <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="ml-1 w-20" size="small"
+                            @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+                        <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
+                            + 新增标签
+                        </el-button>
+                    </span>
                 </el-form-item>
             </el-form>
         </FormDialog>
@@ -68,7 +82,7 @@
 
 <script setup>
 import { Search, RefreshRight } from '@element-plus/icons-vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import { getTagPageList, addTag, deleteTag } from '@/api/admin/tag'
 import moment from 'moment'
 import { showMessage, showModel } from '@/composables/util'
@@ -143,7 +157,7 @@ function getTableData() {
         .then((res) => {
             if (res.success == true) {
 
-                tableData.value = res.data  
+                tableData.value = res.data
                 current.value = res.current
                 size.value = res.size
                 total.value = res.total
@@ -182,35 +196,22 @@ const formRef = ref(null)
 
 // 添加文章分类表单对象
 const form = reactive({
-    name: ''
+    tags: []
 })
 
-// 规则校验
-const rules = {
-    name: [
-        {
-            required: true,
-            message: '标签名称不能为空',
-            trigger: 'blur',
-        },
-        { min: 1, max: 20, message: '标签名称字数要求大于 1 个字符，小于 20 个字符', trigger: 'blur' },
-    ]
-}
 
 const onSubmit = () => {
     // 先验证 form 表单字段
     formRef.value.validate((valid) => {
-        if (!valid) {
-            console.log('表单验证不通过')
-            return false
-        }
-        // 
+        // 显示提交按钮 loading
         formDialogRef.value.showBtnLoading()
+        form.tags = dynamicTags.value
         addTag(form).then((res) => {
             if (res.success == true) {
                 showMessage('添加成功')
-                // 将表单中分类名称置空
-                form.name = ''
+                // 将表单中标签数组置空
+                form.tags = []
+                dynamicTags.value = []
                 // 隐藏对话框
                 formDialogRef.value.close()
                 // 重新请求分页接口，渲染数据
@@ -221,12 +222,12 @@ const onSubmit = () => {
                 // 提示错误消息
                 showMessage(message, 'error')
             }
-        }).finally(() => formDialogRef.value.closeBtnLoading())
+        }).finally(() => formDialogRef.value.closeBtnLoading()) // 隐藏提交按钮 loading
 
     })
 }
 
-// 删除分类
+// 删除标签
 const deleteTagSubmit = (row) => {
     console.log(row)
     showModel('是否确定要删除该标签？').then(() => {
@@ -245,6 +246,34 @@ const deleteTagSubmit = (row) => {
     }).catch(() => {
         console.log('取消了')
     })
+}
+
+// 标签输入框值
+const inputValue = ref('')
+// 已输入的标签数组
+const dynamicTags = ref([])
+// 标签输入框是否显示
+const inputVisible = ref(false)
+// 标签输入框的引用
+const InputRef = ref('')
+
+const handleClose = (tag) => {
+    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1)
+}
+
+const showInput = () => {
+    inputVisible.value = true
+    nextTick(() => {
+        InputRef.value.input.focus()
+    })
+}
+
+const handleInputConfirm = () => {
+    if (inputValue.value) {
+        dynamicTags.value.push(inputValue.value)
+    }
+    inputVisible.value = false
+    inputValue.value = ''
 }
 
 </script>
