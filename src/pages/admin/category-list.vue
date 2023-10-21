@@ -5,7 +5,7 @@
             <!-- flex 布局，内容垂直居中 -->
             <div class="flex items-center">
                 <el-text>分类名称</el-text>
-                <div class="ml-3 w-52 mr-5"><el-input v-model="searchCategoryName" placeholder="请输入（模糊查询）" /></div>
+                <div class="ml-3 w-52 mr-5"><el-input v-model="searchCategoryName" placeholder="请输入" /></div>
 
                 <el-text>创建日期</el-text>
                 <div class="ml-3 w-30 mr-5">
