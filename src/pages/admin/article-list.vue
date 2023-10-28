@@ -45,7 +45,7 @@
                                 <Edit />
                             </el-icon>
                             编辑</el-button>
-                        <el-button type="danger" size="small">
+                        <el-button type="danger" size="small" @click="deleteArticleSubmit(scope.row)">
                             <el-icon class="mr-1">
                                 <Delete />
                             </el-icon>
@@ -98,7 +98,8 @@
                 <MdEditor v-model="form.content" editorId="publishArticleEditor" />
             </el-form-item>
             <el-form-item label="封面" prop="cover">
-                <el-upload class="avatar-uploader" action="#" :auto-upload="false" :show-file-list="false">
+                <el-upload class="avatar-uploader" action="#" :on-change="handleCoverChange" :auto-upload="false"
+                    :show-file-list="false">
                     <img v-if="form.cover" :src="form.cover" class="avatar" />
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
@@ -129,10 +130,12 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
-import { getArticlePageList } from '@/api/admin/article'
 import moment from 'moment'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { uploadFile } from '@/api/admin/file'
+import { getArticlePageList, deleteArticle } from '@/api/admin/article'
+import { showMessage, showModel } from '@/composables/util'
 
 // 模糊搜索的文章标题
 const searchArticleTitle = ref('')
@@ -251,6 +254,48 @@ const handleSizeChange = (chooseSize) => {
     console.log('选择的页码' + chooseSize)
     size.value = chooseSize
     getTableData()
+}
+
+// 上传文章封面图片
+const handleCoverChange = (file) => {
+    // 表单对象
+    let formData = new FormData()
+    // 添加 file 字段，并将文件传入 
+    formData.append('file', file.raw)
+    uploadFile(formData).then((e) => {
+        // 响参失败，提示错误消息
+        if (e.success == false) {
+            let message = e.message
+            showMessage(message, 'error')
+            return
+        }
+
+        // 成功则设置表单对象中的封面链接，并提示上传成功
+        form.cover = e.data.url
+        showMessage('上传成功')
+    })
+}
+
+// 删除文章
+const deleteArticleSubmit = (row) => {
+    console.log(row)
+    showModel('是否确定要删除该文章？').then(() => {
+        deleteArticle(row.id).then((res) => {
+            if (res.success == false) {
+                // 获取服务端返回的错误消息
+                let message = res.message
+                // 提示错误消息
+                showMessage(message, 'error')
+                return
+            }
+
+            showMessage('删除成功')
+            // 重新请求分页接口，渲染数据
+            getTableData()
+        })
+    }).catch(() => {
+        console.log('取消了')
+    })
 }
 
 </script>
