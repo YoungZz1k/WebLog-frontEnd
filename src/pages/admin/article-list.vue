@@ -64,110 +64,87 @@
 
         </el-card>
 
-    </div>
-
-    <!-- 写博客 -->
-    <el-dialog v-model="isArticlePublishEditorShow" :fullscreen="true" :show-close="false">
-        <template #header="{ close, titleId, titleClass }">
-            <!-- 固钉组件，固钉到顶部 -->
-            <el-affix :offset="20" style="width: 100%;">
-                <!-- 指定 flex 布局， 高度为 10， 背景色为白色 -->
-                <div class="flex h-10 bg-white">
-                    <!-- 字体加粗 -->
-                    <h4 class="font-bold">写文章</h4>
-                    <!-- 靠右对齐 -->
-                    <div class="ml-auto flex">
-                        <el-button @click="isArticlePublishEditorShow = false">取消</el-button>
-                        <el-button type="primary">
-                            <el-icon class="mr-1">
-                                <Promotion />
-                            </el-icon>
-                            发布
-                        </el-button>
+        <!-- 写博客 -->
+        <el-dialog v-model="isArticlePublishEditorShow" :fullscreen="true" :show-close="false">
+            <template #header="{ close, titleId, titleClass }">
+                <!-- 固钉组件，固钉到顶部 -->
+                <el-affix :offset="20" style="width: 100%;">
+                    <!-- 指定 flex 布局， 高度为 10， 背景色为白色 -->
+                    <div class="flex h-10 bg-white">
+                        <!-- 字体加粗 -->
+                        <h4 class="font-bold">写文章</h4>
+                        <!-- 靠右对齐 -->
+                        <div class="ml-auto flex">
+                            <el-button @click="isArticlePublishEditorShow = false">取消</el-button>
+                            <el-button type="primary" @click="publishArticleSubmit">
+                                <el-icon class="mr-1">
+                                    <Promotion />
+                                </el-icon>
+                                发布
+                            </el-button>
+                        </div>
                     </div>
-                </div>
-            </el-affix>
-        </template>
-        <!-- label-position="top" 用于指定 label 元素在上面 -->
-        <el-form :model="form" ref="publishArticleFormRef" label-position="top" size="large" :rules="rules">
-            <el-form-item label="标题" prop="title">
-                <el-input v-model="form.title" autocomplete="off" size="large" maxlength="40" show-word-limit clearable />
-            </el-form-item>
-            <el-form-item label="内容" prop="content">
-                <!-- Markdown 编辑器 -->
-                <MdEditor v-model="form.content" editorId="publishArticleEditor" />
-            </el-form-item>
-            <el-form-item label="封面" prop="cover">
-                <el-upload class="avatar-uploader" action="#" :on-change="handleCoverChange" :auto-upload="false"
-                    :show-file-list="false">
-                    <img v-if="form.cover" :src="form.cover" class="avatar" />
-                    <el-icon v-else class="avatar-uploader-icon">
-                        <Plus />
-                    </el-icon>
-                </el-upload>
-            </el-form-item>
-            <el-form-item label="摘要" prop="summary">
-                <!-- :rows="3" 指定 textarea 默认显示 3 行 -->
-                <el-input v-model="form.summary" :rows="3" type="textarea" placeholder="请输入文章摘要" />
-            </el-form-item>
-            <el-form-item label="分类" prop="categoryId">
-                <el-select v-model="form.categoryId" clearable placeholder="---请选择---" size="large">
-
-                </el-select>
-            </el-form-item>
-            <el-form-item label="标签" prop="tags">
-                <!-- 标签选择 -->
-                <el-select v-model="form.tags" multiple filterable remote reserve-keyword placeholder="---请输入---"
-                    remote-show-suffix :remote-method="remoteMethod" allow-create default-first-option
-                    :loading="tagSelectLoading" size="large">
-
-                </el-select>
-            </el-form-item>
-        </el-form>
-    </el-dialog>
+                </el-affix>
+            </template>
+            <!-- label-position="top" 用于指定 label 元素在上面 -->
+            <el-form :model="form" ref="publishArticleFormRef" label-position="top" size="large" :rules="rules">
+                <el-form-item label="标题" prop="title">
+                    <el-input v-model="form.title" autocomplete="off" size="large" maxlength="40" show-word-limit
+                        clearable />
+                </el-form-item>
+                <el-form-item label="内容" prop="content">
+                    <!-- Markdown 编辑器 -->
+                    <MdEditor v-model="form.content" @onUploadImg="onUploadImg" editorId="publishArticleEditor" />
+                </el-form-item>
+                <el-form-item label="封面" prop="cover">
+                    <el-upload class="avatar-uploader" action="#" :on-change="handleCoverChange" :auto-upload="false"
+                        :show-file-list="false">
+                        <img v-if="form.cover" :src="form.cover" class="avatar" />
+                        <el-icon v-else class="avatar-uploader-icon">
+                            <Plus />
+                        </el-icon>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="摘要" prop="summary">
+                    <!-- :rows="3" 指定 textarea 默认显示 3 行 -->
+                    <el-input v-model="form.summary" :rows="3" type="textarea" placeholder="请输入文章摘要" />
+                </el-form-item>
+                <el-form-item label="分类" prop="categoryId">
+                    <el-select v-model="form.categoryId" clearable placeholder="---请选择---" size="large">
+                        <el-option v-for="item in categories" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="标签" prop="tags">
+                    <span class="w-60">
+                        <!-- 标签选择 -->
+                        <el-select v-model="form.tags" multiple filterable remote reserve-keyword placeholder="请输入文章标签"
+                            remote-show-suffix allow-create default-first-option :remote-method="remoteMethod"
+                            :loading="tagSelectLoading" size="large">
+                            <el-option v-for="item in tags" :key="item.value" :label="item.label" :value="item.value" />
+                        </el-select>
+                    </span>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
+import { getArticlePageList, deleteArticle, publishArticle } from '@/api/admin/article'
+import { uploadFile } from '@/api/admin/file'
+import { getCategorySelectList } from '@/api/admin/category'
+import { searchTags } from '@/api/admin/tag'
 import moment from 'moment'
+import { showMessage, showModel } from '@/composables/util'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
-import { uploadFile } from '@/api/admin/file'
-import { getArticlePageList, deleteArticle } from '@/api/admin/article'
-import { showMessage, showModel } from '@/composables/util'
 
 // 模糊搜索的文章标题
 const searchArticleTitle = ref('')
 // 日期
 const pickDate = ref('')
-// 是否显示文章发布对话框
-const isArticlePublishEditorShow = ref(false)
-// 发布文章表单引用
-const publishArticleFormRef = ref(null)
-
-// 表单对象
-const form = reactive({
-    id: null,
-    title: '',
-    content: '请输入内容',
-    cover: '',
-    categoryId: null,
-    tags: [],
-    summary: ""
-})
-
-// 表单校验规则
-const rules = {
-    title: [
-        { required: true, message: '请输入文章标题', trigger: 'blur' },
-        { min: 1, max: 40, message: '文章标题要求大于1个字符，小于40个字符', trigger: 'blur' },
-    ],
-    content: [{ required: true }],
-    cover: [{ required: true }],
-    categoryId: [{ required: true, message: '请选择文章分类', trigger: 'blur' }],
-    tags: [{ required: true, message: '请选择文章标签', trigger: 'blur' }],
-}
 
 // 查询条件：开始结束时间
 const startDate = reactive({})
@@ -256,26 +233,6 @@ const handleSizeChange = (chooseSize) => {
     getTableData()
 }
 
-// 上传文章封面图片
-const handleCoverChange = (file) => {
-    // 表单对象
-    let formData = new FormData()
-    // 添加 file 字段，并将文件传入 
-    formData.append('file', file.raw)
-    uploadFile(formData).then((e) => {
-        // 响参失败，提示错误消息
-        if (e.success == false) {
-            let message = e.message
-            showMessage(message, 'error')
-            return
-        }
-
-        // 成功则设置表单对象中的封面链接，并提示上传成功
-        form.cover = e.data.url
-        showMessage('上传成功')
-    })
-}
-
 // 删除文章
 const deleteArticleSubmit = (row) => {
     console.log(row)
@@ -298,6 +255,136 @@ const deleteArticleSubmit = (row) => {
     })
 }
 
+// 是否显示文章发布对话框
+const isArticlePublishEditorShow = ref(false)
+// 发布文章表单引用
+const publishArticleFormRef = ref(null)
+
+// 表单对象
+const form = reactive({
+    id: null,
+    title: '',
+    content: '请输入内容',
+    cover: '',
+    categoryId: null,
+    tags: [],
+    summary: ""
+})
+
+// 表单校验规则
+const rules = {
+    title: [
+        { required: true, message: '请输入文章标题', trigger: 'blur' },
+        { min: 1, max: 40, message: '文章标题要求大于1个字符，小于40个字符', trigger: 'blur' },
+    ],
+    content: [{ required: true }],
+    cover: [{ required: true }],
+    categoryId: [{ required: true, message: '请选择文章分类', trigger: 'blur' }],
+    tags: [{ required: true, message: '请选择文章标签', trigger: 'blur' }],
+}
+
+// 上传文章封面图片
+const handleCoverChange = (file) => {
+    // 表单对象
+    let formData = new FormData()
+    // 添加 file 字段，并将文件传入 
+    formData.append('file', file.raw)
+    uploadFile(formData).then((e) => {
+        // 响参失败，提示错误消息
+        if (e.success == false) {
+            let message = e.message
+            showMessage(message, 'error')
+            return
+        }
+
+        // 成功则设置表单对象中的封面链接，并提示上传成功
+        form.cover = e.data.url
+        showMessage('上传成功')
+    })
+}
+
+// 编辑器图片上传
+const onUploadImg = async (files, callback) => {
+    const res = await Promise.all(
+        files.map((file) => {
+            return new Promise((rev, rej) => {
+                console.log('==> 编辑器开始上传文件...')
+                let formData = new FormData()
+                formData.append("file", file);
+                uploadFile(formData).then((res) => {
+                    console.log(res)
+                    console.log('访问路径：' + res.data.url)
+                    // 调用 callback 函数，回显上传图片
+                    callback([res.data.url]);
+                })
+            });
+        })
+    );
+}
+
+// 文章分类
+const categories = ref([])
+getCategorySelectList().then((e) => {
+    console.log('获取分类数据')
+    categories.value = e.data
+})
+
+// 标签 select Loading 状态，默认不显示
+const tagSelectLoading = ref(false)
+// 文章标签
+const tags = ref([])
+
+// 根据用户输入的标签名称，远程模糊查询
+const remoteMethod = (query) => {
+    console.log('远程搜索：' + tags.value)
+    // 如果用户的查询关键词不为空
+    if (query) {
+        // 显示 loading
+        tagSelectLoading.value = true
+        // 调用标签模糊查询接口
+        searchTags(query).then((e) => {
+            if (e.success) {
+                // 设置到 tags 变量中
+                tags.value = e.data
+            }
+        }).finally(() => tagSelectLoading.value = false) // 隐藏 loading
+    }
+}
+
+// 发布文章
+const publishArticleSubmit = () => {
+    // isArticlePublishEditorShow.value = true
+    console.log('提交 md 内容：' + form.content)
+    // 校验表单
+    publishArticleFormRef.value.validate((valid) => {
+        if (!valid) {
+            return false
+        }
+
+        publishArticle(form).then((res) => {
+            if (res.success == false) {
+                // 获取服务端返回的错误消息
+                let message = res.message
+                // 提示错误消息
+                showMessage(message, 'error')
+                return
+            }
+
+            showMessage('发布成功')
+            // 隐藏发布文章对话框
+            isArticlePublishEditorShow.value = false
+            // 将 form 表单字段置空
+            form.title = ''
+            form.content = ''
+            form.cover = ''
+            form.summary = ''
+            form.categoryId = null
+            form.tags = []
+            // 重新请求分页接口，渲染列表数据
+            getTableData()
+        })
+    })
+}
 </script>
 
 <style scoped>
@@ -314,5 +401,16 @@ const deleteArticleSubmit = (row) => {
     width: 200px;
     height: 100px;
     text-align: center;
+}
+
+/* 指定 select 下拉框宽度 */
+.el-select--large {
+    width: 600px;
+}
+</style>
+
+<style>
+.md-editor-footer {
+    height: 40px;
 }
 </style>
