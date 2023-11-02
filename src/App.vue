@@ -7,18 +7,13 @@
 </template>
 
 <script setup>
- 
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+const locale = zhCn
 </script>
 
 <style>
-
 /* 自定义顶部加载 Loading 颜色 */
 #nprogress .bar {
    background: #409eff!important;
 }
 </style>
-
-<script setup>
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-const locale = zhCn
-</script>

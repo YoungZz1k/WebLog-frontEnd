@@ -11,67 +11,67 @@
                     <Expand v-else />
                 </el-icon>
             </div>
-    <!-- 右边容器 -->
-    <div class="ml-auto flex">
-        <!-- 点击刷新页面 -->
-        <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
-            <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                @click="handleRefresh">
-                <el-icon>
-                    <Refresh />
-                </el-icon>
+
+            <!-- 右边容器 -->
+            <div class="ml-auto flex">
+                <!-- 点击刷新页面 -->
+                <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
+                    <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                        @click="handleRefresh">
+                        <el-icon>
+                            <Refresh />
+                        </el-icon>
+                    </div>
+                </el-tooltip>
+
+                <!-- 点击全屏展示 -->
+                <el-tooltip class="box-item" effect="dark" content="全屏" placement="bottom">
+                    <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 mr-2 hover:bg-gray-200"
+                        @click="toggle">
+                        <el-icon>
+                            <FullScreen v-if="!isFullscreen" />
+                            <Aim v-else />
+                        </el-icon>
+                    </div>
+                </el-tooltip>
+
+                <!-- 登录用户头像 -->
+                <el-dropdown class="flex items-center justify-center" @command="handleCommand">
+                    <span class="el-dropdown-link flex items-center justify-center text-gray-700 text-xs">
+                        <!-- 头像 Avatar -->
+                        <el-avatar class="mr-2" :size="25"
+                            src="https://img.quanxiaoha.com/quanxiaoha/f97361c0429d4bb1bc276ab835843065.jpg" />
+                        {{ userStore.userInfo.username }}
+                        <el-icon class="el-icon--right">
+                            <arrow-down />
+                        </el-icon>
+                    </span>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
+                            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </div>
-        </el-tooltip>
+        </div>
 
-        <!-- 点击全屏展示 -->
-        <el-tooltip class="box-item" effect="dark" content="全屏" placement="bottom">
-            <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 mr-2 hover:bg-gray-200"
-                @click="toggle">
-                <el-icon>
-                    <FullScreen v-if="!isFullscreen" />
-                    <Aim v-else />
-                </el-icon>
-            </div>
-        </el-tooltip>
-
-        <!-- 登录用户头像 -->
-        <el-dropdown class="flex items-center justify-center" @command="handleCommand">
-            <span class="el-dropdown-link flex items-center justify-center text-gray-700 text-xs">
-                <!-- 头像 Avatar -->
-                <el-avatar class="mr-2" :size="25"
-                    src="https://img.quanxiaoha.com/quanxiaoha/f97361c0429d4bb1bc276ab835843065.jpg" />
-                {{ userStore.userInfo.username }}
-                <el-icon class="el-icon--right">
-                    <arrow-down />
-                </el-icon>
-            </span>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
-                    <el-dropdown-item command="logout">退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
-        
-    </div>
-    </div>
-</el-affix>
-
-    <!-- 修改密码 -->
-    <FormDialog ref="formDialogRef" title="修改密码" destroyOnClose @submit="onSubmit">
-        <el-form ref="formRef" :rules="rules" :model="form">
-            <el-form-item label="用户名" prop="username" label-width="120px" size="large">
-                <!-- 输入框组件 -->
-                <el-input v-model="form.username" placeholder="请输入用户名" clearable disabled />
-            </el-form-item>
-            <el-form-item label="新密码" prop="password" label-width="120px" size="large">
-                <el-input type="password" v-model="form.password" placeholder="请输入新密码" clearable show-password />
-            </el-form-item>
-            <el-form-item label="确认新密码" prop="rePassword" label-width="120px" size="large">
-                <el-input type="password" v-model="form.rePassword" placeholder="请确认新密码" clearable show-password />
-            </el-form-item>
-        </el-form>
-    </FormDialog>
+        <!-- 修改密码 -->
+        <FormDialog ref="formDialogRef" title="修改密码" destroyOnClose @submit="onSubmit">
+            <el-form ref="formRef" :rules="rules" :model="form">
+                <el-form-item label="用户名" prop="username" label-width="120px" size="large">
+                    <!-- 输入框组件 -->
+                    <el-input v-model="form.username" placeholder="请输入用户名" clearable disabled />
+                </el-form-item>
+                <el-form-item label="新密码" prop="password" label-width="120px" size="large">
+                    <el-input type="password" v-model="form.password" placeholder="请输入新密码" clearable show-password />
+                </el-form-item>
+                <el-form-item label="确认新密码" prop="rePassword" label-width="120px" size="large">
+                    <el-input type="password" v-model="form.rePassword" placeholder="请确认新密码" clearable show-password />
+                </el-form-item>
+            </el-form>
+        </FormDialog>
+    </el-affix>
 </template>
 
 <script setup>

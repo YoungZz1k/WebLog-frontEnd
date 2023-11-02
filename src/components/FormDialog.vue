@@ -1,6 +1,8 @@
 <template>
-    <el-dialog v-model="dialogVisible" :title="title" :width="width" :destroy-on-close="destroyOnClose" :draggable="true"
-        :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog v-model="dialogVisible" :title="title" :width="width"
+    :destroy-on-close="destroyOnClose"
+     :draggable="true" :close-on-click-modal="false"
+        :close-on-press-escape="false">
         <!-- 插槽 -->
         <slot></slot>
         <template #footer>
@@ -34,7 +36,7 @@ const props = defineProps({
         type: String,
         default: '40%'
     },
-    destroyOnClose: {
+    destroyOnClose:  {
         type: Boolean,
         default: false
     },
@@ -50,7 +52,7 @@ const open = () => dialogVisible.value = true
 const close = () => dialogVisible.value = false
 
 // 对外暴露一个 submit 方法
-const emit = defineEmits(['submit'])
+const emit  = defineEmits(['submit'])
 const submit = () => emit('submit')
 
 // 对外暴露方法
