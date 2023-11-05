@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getToken } from "@/composables/cookie"
-import { showMessage} from '@/composables/util'
+import { showMessage } from '@/composables/util'
 import { removeToken } from '@/composables/cookie'
 
 // 创建 Axios 实例
@@ -39,8 +39,9 @@ instance.interceptors.response.use(function (response) {
 
     // 状态码 401
     if (status == 401) {
-        // 删除 cookie 中的令牌
-        removeToken()
+        // 退出登录
+        let userStore = useUserStore()
+        userStore.logout()
         // 刷新页面
         location.reload()
     }
