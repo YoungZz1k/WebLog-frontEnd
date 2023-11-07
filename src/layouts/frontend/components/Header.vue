@@ -19,7 +19,7 @@
                         </svg>
                         <span class="sr-only">Search</span>
                     </button>
-                    <div class="relative hidden mr-2 md:block">
+                    <div class="relative hidden mr-2 md:block"></div>
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -30,7 +30,7 @@
                         </div>
                         <input type="text" id="search-navbar"
                             class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="请输入关键词...">
+                            placeholder="请输入搜索关键词...">
                     </div>
 
                     <!-- 登录 -->
@@ -38,7 +38,7 @@
                         @click="$router.push('/login')">登录</div>
                     <!-- 已经登录，展示用户头像 -->
                     <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" v-else
-                        class="text-white ml-2 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        class="text-white ml-2 mr-2 md:mr-0 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         type="button">
                         <!-- 用户登录头像 -->
                         <img class="w-8 h-8 rounded-full" :src="blogSettingsStore.blogSettings.avatar" alt="user photo">
@@ -101,13 +101,13 @@
                         </div>
                         <input type="text" id="search-navbar"
                             class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Search...">
+                            placeholder="请输入搜索关键词...">
                     </div>
                     <ul
                         class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                         <li>
-                            <a href="#"
-                                class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                            <a @click="router.push('/')" :class="[currPath == '/' ? 'text-blue-700' : 'text-gray-900']"
+                                class="block py-2 pl-3 pr-4  rounded md:bg-transparent md:p-0 md:dark:text-blue-500"
                                 aria-current="page">首页</a>
                         </li>
                         <li>
@@ -119,8 +119,9 @@
                                 class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">标签</a>
                         </li>
                         <li>
-                            <a href="#"
-                                class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">归档</a>
+                            <a @click="router.push('/archive/list')"
+                                :class="[currPath == '/archive/list' ? 'text-blue-700' : 'text-gray-900']"
+                                class="block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">归档</a>
                         </li>
                     </ul>
                 </div>
@@ -169,10 +170,9 @@ import { onMounted, ref } from 'vue'
 import { initCollapses, initDropdowns, initModals } from 'flowbite'
 import { useBlogSettingsStore } from '@/stores/blogsettings'
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { showMessage } from '@/composables/util'
 
-const router = useRouter()
 // 初始化 flowbit 相关组件
 onMounted(() => {
     initCollapses();
@@ -180,13 +180,11 @@ onMounted(() => {
     initModals();
 })
 
-// 退出登录
-const logout = () => {
-    userStore.logout()
-    // 标记为未登录
-    isLogined.value = false
-    showMessage('退出登录成功')
-}
+const router = useRouter()
+const route = useRoute()
+
+// 当前路由地址
+const currPath = ref(route.path)
 
 // 引入博客设置信息 store
 const blogSettingsStore = useBlogSettingsStore()
@@ -197,4 +195,12 @@ const userStore = useUserStore()
 const keys = Object.keys(userStore.userInfo)
 // 若大于零，则表示用户已登录
 const isLogined = ref(keys.length > 0)
+
+// 退出登录
+const logout = () => {
+    userStore.logout()
+    // 标记为未登录
+    isLogined.value = false
+    showMessage('退出登录成功')
+}
 </script>

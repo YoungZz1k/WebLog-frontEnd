@@ -1,4 +1,5 @@
 import Index from '@/pages/frontend/index.vue'
+import ArchiveList from '@/pages/frontend/archive-list.vue'
 import Login from '@/pages/admin/login.vue'
 import AdminIndex from '@/pages/admin/index.vue'
 import AdminArticleList from '@/pages/admin/article-list.vue'
@@ -15,6 +16,13 @@ const routes = [
         component: Index, // 对应组件
         meta: { // meta 信息
             title: 'Weblog 首页' // 页面标题
+        }
+    },
+    {
+        path: '/archive/list', // 归档页
+        component: ArchiveList,
+        meta: { // meta 信息
+            title: 'Weblog 归档页'
         }
     },
     {
