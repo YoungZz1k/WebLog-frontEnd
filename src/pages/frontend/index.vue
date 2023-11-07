@@ -49,7 +49,7 @@
                                             stroke-width="2"
                                             d="M1 5v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H1Zm0 0V2a1 1 0 0 1 1-1h5.443a1 1 0 0 1 .8.4l2.7 3.6H1Z" />
                                     </svg>
-                                    <a href="#" class="text-gray-400 hover:underline">{{ article.category.name }}</a>
+                                    <a @click="goCategoryArticleListPage(article.category.id, article.category.name)" class="cursor-pointer text-gray-400 hover:underline">{{ article.category.name }}</a>
                                 </p>
                             </div>
                         </div>
@@ -128,6 +128,15 @@ import TagListCard from '@/layouts/frontend/components/TagListCard.vue'
 import { initTooltips } from 'flowbite'
 import { onMounted, ref } from 'vue'
 import { getArticlePageList } from '@/api/frontend/article'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 跳转分类文章列表页
+const goCategoryArticleListPage = (id, name) => {
+    // 跳转时通过 query 携带参数（分类 ID、分类名称）
+    router.push({path: '/category/article/list', query: {id, name}})
+}
 
 
 // initialize components based on data attribute selectors
