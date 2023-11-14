@@ -139,7 +139,7 @@ const goCategoryArticleListPage = (id, name) => {
 }
 
 
-// initialize components based on data attribute selectors
+// initialize components based on data attribute selectors  
 onMounted(() => {
     initTooltips();
 })
