@@ -2,7 +2,7 @@
     <Header></Header>
 
     <!-- 主内容区域 -->
-    <main class="container max-w-screen-xl mx-auto p-4 px-6">
+    <main class="container max-w-screen-xl mx-auto p-4">
         <!-- grid 表格布局，分为 4 列 -->
         <div class="grid grid-cols-4 gap-7">
             <!-- 左边栏，占用 3 列 -->
@@ -55,7 +55,8 @@
                                     d="M1 5v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H1Zm0 0V2a1 1 0 0 1 1-1h5.443a1 1 0 0 1 .8.4l2.7 3.6H1Z" />
                             </svg>
                             <span class="hidden md:inline">分类于</span>
-                            <a @click="goCategoryArticleListPage(article.categoryId, article.categoryName)" class="cursor-pointer mr-1 hover:underline">{{ article.categoryName }}</a>
+                            <a @click="goCategoryArticleListPage(article.categoryId, article.categoryName)"
+                                class="cursor-pointer mr-1 hover:underline">{{ article.categoryName }}</a>
 
                             <!-- 阅读量 -->
                             <svg class="inline w-3 h-3 ml-5 mr-2 dark:text-white" aria-hidden="true"
@@ -69,11 +70,12 @@
                         </div>
 
                         <!-- 正文 -->
-                        <div class="mt-5" v-html="article.content"></div>
+                        <div class="mt-5 article-content" v-html="article.content"></div>
 
                         <!-- 标签集合 -->
                         <div v-if="article.tags && article.tags.length > 0" class="mt-5">
-                            <span @click="goTagArticleListPage(tag.id, tag.name)" v-for="(tag, index) in article.tags" :key="index"
+                            <span @click="goTagArticleListPage(tag.id, tag.name)" v-for="(tag, index) in article.tags"
+                                :key="index"
                                 class="inline-block mb-1 cursor-pointer bg-green-100 text-green-800 text-xs font-medium mr-2 px-3 py-1 rounded-full hover:bg-green-200 hover:text-green-900 dark:bg-green-900 dark:text-green-300">
                                 # {{ tag.name }}
                             </span>
@@ -84,7 +86,8 @@
                             <!-- basis-1/2 用于占用 flex 布局的一半空间 -->
                             <div class="basis-1/2">
                                 <!-- h-full 指定高度占满 -->
-                                <a v-if="article.preArticle" @click="router.push('/article/' + article.preArticle.articleId)"
+                                <a v-if="article.preArticle"
+                                    @click="router.push('/article/' + article.preArticle.articleId)"
                                     class="cursor-pointer flex flex-col h-full p-4 mr-3 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                     <div>
                                         <svg class="inline w-3.5 h-3.5 mr-2 mb-1" aria-hidden="true"
@@ -100,7 +103,8 @@
 
                             <div class="basis-1/2">
                                 <!-- text-right 指定文字居右显示 -->
-                                <a v-if="article.nextArticle" @click="router.push('/article/' + article.nextArticle.articleId)"
+                                <a v-if="article.nextArticle"
+                                    @click="router.push('/article/' + article.nextArticle.articleId)"
                                     class="cursor-pointer flex flex-col h-full text-right p-4 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                     <div>
                                         下一篇
@@ -122,14 +126,16 @@
 
             <!-- 右边侧边栏，占用一列 -->
             <aside class="col-span-4 md:col-span-1">
-                <!-- 博主信息 -->
-                <UserInfoCard></UserInfoCard>
+                <div class="sticky top-[5.5rem]">
+                    <!-- 博主信息 -->
+                    <UserInfoCard></UserInfoCard>
 
-                <!-- 分类 -->
-                <CategoryListCard></CategoryListCard>
+                    <!-- 分类 -->
+                    <CategoryListCard></CategoryListCard>
 
-                <!-- 标签 -->
-                <TagListCard></TagListCard>
+                    <!-- 标签 -->
+                    <TagListCard></TagListCard>
+                </div>
             </aside>
         </div>
 
@@ -170,13 +176,13 @@ refreshArticleDetail(route.params.articleId)
 // 跳转分类文章列表页
 const goCategoryArticleListPage = (id, name) => {
     // 跳转时通过 query 携带参数（分类 ID、分类名称）
-    router.push({path: '/category/article/list', query: {id, name}})
+    router.push({ path: '/category/article/list', query: { id, name } })
 }
 
 // 跳转标签文章列表页
 const goTagArticleListPage = (id, name) => {
     // 跳转时通过 query 携带参数（标签 ID、标签名称）
-    router.push({path: '/tag/article/list', query: {id, name}})
+    router.push({ path: '/tag/article/list', query: { id, name } })
 }
 
 // 监听路由
@@ -185,3 +191,148 @@ watch(route, (newRoute, oldRoute) => {
     refreshArticleDetail(newRoute.params.articleId)
 })
 </script>
+
+<style>
+/* h1, h2, h3, h4, h5, h6 标题样式 */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    color: #292525;
+    line-height: 150%;
+    font-family: PingFang SC, Helvetica Neue, Helvetica, Hiragino Sans GB, Microsoft YaHei, "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
+}
+
+.article-content h2 {
+    line-height: 1.5;
+    font-weight: 700;
+    font-synthesis: style;
+    font-size: 24px;
+    margin-top: 40px;
+    margin-bottom: 26px;
+    line-height: 140%;
+    border-bottom: 1px solid rgb(241 245 249);
+    padding-bottom: 15px;
+}
+
+.article-content h3 {
+    font-size: 20px;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.article-content h4 {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.article-content h5,
+h6 {
+    font-size: 16px;
+    margin-top: 30px;
+    margin-bottom: 14px;
+    font-weight: 600;
+}
+
+/* p 段落样式 */
+.article-content p {
+    letter-spacing: .3px;
+    margin: 0 0 20px;
+    line-height: 30px;
+    color: #4c4e4d;
+    font-weight: 400;
+    word-break: normal;
+    word-wrap: break-word;
+    font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft Yahei, Arial, sans-serif;
+}
+
+/* blockquote 引用样式 */
+.article-content blockquote {
+    border-left: 2.3px solid rgb(52, 152, 219);
+    quotes: none;
+    background: rgb(236, 240, 241);
+    color: #777;
+    font-size: 16px;
+    margin: 2em 0;
+    padding: 24px;
+}
+
+/* 设置 blockquote 中最后一个 p 标签的 margin-bottom 为 0 */
+.article-content blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* 斜体样式 */
+.article-content em {
+    color: #c849ff;
+}
+
+/* 超链接样式 */
+.article-content a {
+    color: #167bc2;
+}
+
+.article-content a:hover {
+    text-decoration: underline;
+}
+
+/* ul 样式 */
+.article-content ul {
+    padding-left: 2rem;
+}
+
+.article-content ul li {
+    list-style-type: disc;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 16px;
+}
+
+/* ol 样式 */
+.article-content ol {
+    list-style-type: decimal;
+    padding-left: 2rem;
+}
+
+/* 图片样式 */
+.article-content img {
+    max-width: 100%;
+    overflow: hidden;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+
+.article-content img:hover,
+img:focus {
+    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, .15);
+}
+
+/* 图片描述文字 */
+.image-caption {
+    min-width: 20%;
+    max-width: 80%;
+    min-height: 43px;
+    display: block;
+    padding: 10px;
+    margin: 0 auto;
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+}
+
+/* code 样式 */
+.article-content code {
+    padding: 2px 4px;
+    margin: 0 2px;
+    font-size: 95% !important;
+    border-radius: 4px;
+    color: rgb(41, 128, 185);
+    background-color: rgba(27, 31, 35, 0.05);
+    font-family: Operator Mono, Consolas, Monaco, Menlo, monospace;
+}</style>
