@@ -11,7 +11,7 @@
                 <div
                     class="w-full p-5 mb-3 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
                     <!-- 面包屑 -->
-                    <nav class="flex text-gray-500" aria-label="Breadcrumb">
+                    <nav class="flex text-gray-400" aria-label="Breadcrumb">
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <li class="inline-flex items-center">
                                 <a href="/"
@@ -70,7 +70,7 @@
                         </div>
 
                         <!-- 正文 -->
-                        <div class="mt-5 article-content" v-html="article.content"></div>
+                        <div ref="articleContentRef" class="mt-5 article-content" v-viewer v-html="article.content"></div>
 
                         <!-- 标签集合 -->
                         <div v-if="article.tags && article.tags.length > 0" class="mt-5">
@@ -121,6 +121,7 @@
                     </article>
 
 
+
                 </div>
             </div>
 
@@ -152,7 +153,9 @@ import TagListCard from '@/layouts/frontend/components/TagListCard.vue'
 import CategoryListCard from '@/layouts/frontend/components/CategoryListCard.vue'
 import { getArticleDetail } from '@/api/frontend/article'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/tokyo-night-dark.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -172,7 +175,6 @@ function refreshArticleDetail(articleId) {
 }
 refreshArticleDetail(route.params.articleId)
 
-
 // 跳转分类文章列表页
 const goCategoryArticleListPage = (id, name) => {
     // 跳转时通过 query 携带参数（分类 ID、分类名称）
@@ -189,6 +191,28 @@ const goTagArticleListPage = (id, name) => {
 watch(route, (newRoute, oldRoute) => {
     // 重新渲染文章详情
     refreshArticleDetail(newRoute.params.articleId)
+})
+
+const articleContentRef = ref(null)
+onMounted(() => {
+    // 使用 MutationObserver 监视 DOM 的变化
+    const observer = new MutationObserver(mutationsList => {
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                // 获取所有 pre code 节点
+                let highlight = document.querySelectorAll('pre code')
+                // 循环高亮
+                highlight.forEach((block) => {
+                    hljs.highlightBlock(block)
+                })
+            }
+        }
+    })
+
+    // 配置监视子节点的变化
+    const config = { childList: true, subtree: true }
+    // 开始观察内容变化
+    observer.observe(articleContentRef.value, config)
 })
 </script>
 
@@ -327,7 +351,7 @@ img:focus {
 }
 
 /* code 样式 */
-.article-content code {
+.article-content code:not(pre code) {
     padding: 2px 4px;
     margin: 0 2px;
     font-size: 95% !important;
@@ -335,4 +359,25 @@ img:focus {
     color: rgb(41, 128, 185);
     background-color: rgba(27, 31, 35, 0.05);
     font-family: Operator Mono, Consolas, Monaco, Menlo, monospace;
-}</style>
+}
+
+/* pre 样式 */
+pre code.hljs {
+    padding-top: 2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: 6px;
+}
+
+pre:before {
+    background: #fc625d;
+    border-radius: 50%;
+    box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
+    content: ' ';
+    height: 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    position: absolute;
+    width: 10px;
+}
+</style>
