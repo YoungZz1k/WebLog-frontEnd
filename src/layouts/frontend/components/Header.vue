@@ -42,6 +42,7 @@
                         type="button">
                         <!-- 用户登录头像 -->
                         <img class="w-8 h-8 rounded-full" :src="blogSettingsStore.blogSettings.avatar" alt="user photo">
+                        <!-- <img class="rounded-full" style="width: 100px; height: 100px; object-fit: cover;" :src="blogSettingsStore.blogSettings.avatar" alt="user photo"> -->
                     </button>
 
                     <!-- Dropdown menu -->
