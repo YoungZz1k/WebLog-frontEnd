@@ -1,7 +1,7 @@
 <template>
     <div class="fixed overflow-y-auto bg-slate-800 h-screen text-white menu-container transition-all duration-300 shadow-2xl" :style="{ width: menuStore.menuWidth }">
         <!-- 顶部 Logo, 指定高度为 64px, 和右边的 Header 头保持一样高 -->
-        <div class="flex items-center justify-center h-[64px]">
+        <div class="flex items-center justify-center h-[64px]" @click="router.push('/')">
             <img v-if="menuStore.menuWidth == '250px'" src="@/assets/weblog-logo.png" class="h-[60px]">
             <img v-else src="@/assets/weblog-logo-mini.png" class="h-[60px]">
         </div>
@@ -87,11 +87,15 @@ const menus = [
 
 
 .el-menu-item.is-active {
-    background-color: #409eff10;
+    background-color: var(--el-color-primary);
     color: #fff;
 }
 
-.el-menu-item.is-active:before {
+.el-menu-item.is-active:hover {
+    background-color: var(--el-color-primary);
+}
+
+/* .el-menu-item.is-active:before {
     content: "";
     position: absolute;
     top: 0;
@@ -99,7 +103,7 @@ const menus = [
     width: 2px;
     height: 100%;
     background-color: var(--el-color-primary);
-}
+} */
 
 .el-menu-item {
     color: #fff;
