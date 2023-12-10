@@ -4,21 +4,52 @@
             <!-- 博主头像 -->
             <!-- <img class="w-15 h-15 mb-3 rounded-full shadow"
                 :src="blogSettingsStore.blogSettings.avatar"/> -->
-            <img class="mb-3 rounded-full shadow" style="width: 100px; height: 100px; object-fit: cover;"
+            <!-- 博主头像 -->
+            <img class="mb-4 rounded-full shadow" style="width: 100px; height: 100px; object-fit: cover;"
                 :src="blogSettingsStore.blogSettings.avatar" alt="blogger photo">
             <!-- 博主昵称 -->
-            <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ blogSettingsStore.blogSettings.author }}
+            <h5 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">{{ blogSettingsStore.blogSettings.author }}
             </h5>
             <!-- 介绍语 -->
-            <span class="text-sm text-gray-500 dark:text-gray-400">{{ blogSettingsStore.blogSettings.introduction }}</span>
+            <span class="mb-5 text-sm text-gray-500 dark:text-gray-400" data-tooltip-target="introduction-tooltip-bottom"
+                data-tooltip-placement="bottom">{{ blogSettingsStore.blogSettings.introduction }}</span>
+
+            <div id="introduction-tooltip-bottom" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                介绍语
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <!-- 文章数量、分类数量、标签数量、总访问量 -->
+            <!-- flex 布局，justify-center 水平居中，gap-5 设置 flex 内子元素的间距 -->
+            <div class="flex justify-center gap-5 mb-2">
+                <!-- flex 布局，items-center 垂直居中，flex-col 设置子元素上下排列，hover: 用于设置鼠标移动到上面的样式，字体颜色、scale-110 放大效果，cursor-pointer 指定鼠标移动到上面为小手指样式 -->
+                <div class="flex items-center flex-col gap-1 hover:text-blue-700 hover:scale-110 cursor-pointer">
+                    <!-- 字体大小为 text-lg , font-bold 字体加粗 -->
+                    <div class="text-lg font-bold">{{ statisticsInfo.articleTotalCount }}</div>
+                    <!-- 字体大小为 text-sm -->
+                    <div class="text-sm">文章</div>
+                </div>
+                <div class="flex items-center flex-col gap-1 hover:text-blue-700 hover:scale-110 cursor-pointer">
+                    <div class="text-lg font-bold">{{ statisticsInfo.categoryTotalCount }}</div>
+                    <div class="text-sm">分类</div>
+                </div>
+                <div class="flex items-center flex-col gap-1 hover:text-blue-700 hover:scale-110 cursor-pointer">
+                    <div class="text-lg font-bold">{{ statisticsInfo.tagTotalCount }}</div>
+                    <div class="text-sm">标签</div>
+                </div>
+                <div class="flex items-center flex-col gap-1">
+                    <div class="text-lg font-bold">{{ statisticsInfo.pvTotalCount }}</div>
+                    <div class="text-sm">总访问量</div>
+                </div>
+            </div>
             <!-- 第三方平台主页跳转（如 GitHub 等） -->
             <div class="flex justify-center gap-2">
                 <!-- GitHub -->
                 <svg @click="jump(blogSettingsStore.blogSettings.githubHomepage)"
                     v-if="blogSettingsStore.blogSettings.githubHomepage" t="1698029949662"
-                    data-tooltip-target="github-tooltip-bottom" data-tooltip-placement="bottom" class="icon mt-5 w-7 h-7"
-                    viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1447" width="200"
-                    height="200">
+                    data-tooltip-target="github-tooltip-bottom" data-tooltip-placement="bottom"
+                    class="hover:scale-110 cursor-pointer icon mt-5 w-7 h-7 outline-none" viewBox="0 0 1024 1024"
+                    version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1447" width="200" height="200">
                     <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#4186F5" p-id="1448"></path>
                     <path
                         d="M611.944 302.056c0-15.701 2.75-30.802 7.816-44.917a384.238 384.238 0 0 0-186.11 2.956c-74.501-50.063-93.407-71.902-107.975-39.618a136.243 136.243 0 0 0-3.961 102.287 149.515 149.515 0 0 0-39.949 104.806c0 148.743 92.139 181.875 179.961 191.61a83.898 83.898 0 0 0-25.192 51.863c-40.708 22.518-91.94 8.261-115.181-32.058a83.117 83.117 0 0 0-60.466-39.98s-38.871-0.361-2.879 23.408a102.97 102.97 0 0 1 43.912 56.906s23.398 75.279 133.531 51.863v65.913c0 10.443 13.548 42.63 102.328 42.63 71.275 0 94.913-30.385 94.913-42.987V690.485a90.052 90.052 0 0 0-26.996-72.03c83.996-9.381 173.328-40.204 179.6-176.098a164.706 164.706 0 0 1-21.129 1.365c-84.07 0-152.223-63.426-152.223-141.666z"
@@ -28,7 +59,7 @@
                         fill="#FFFFFF" opacity=".4" p-id="1450"></path>
                 </svg>
                 <div id="github-tooltip-bottom" role="tooltip"
-                    class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                    class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded shadow-sm opacity-0 tooltip dark:bg-gray-700">
                     我的 GitHub
                     <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
@@ -43,7 +74,7 @@
                         fill="#C71D23" p-id="2439"></path>
                 </svg>
                 <div id="gitee-tooltip-bottom" role="tooltip"
-                    class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                    class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded shadow-sm opacity-0 tooltip dark:bg-gray-700">
                     我的 Gitee
                     <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
@@ -61,7 +92,7 @@
                         fill="#0F84FD" p-id="3422"></path>
                 </svg>
                 <div id="zhihu-tooltip-bottom" role="tooltip"
-                    class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                    class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded shadow-sm opacity-0 tooltip dark:bg-gray-700">
                     我的知乎
                     <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
@@ -76,7 +107,7 @@
                         fill="#DD1700" p-id="4387"></path>
                 </svg>
                 <div id="csdn-tooltip-bottom" role="tooltip"
-                    class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                    class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded shadow-sm opacity-0 tooltip dark:bg-gray-700">
                     我的 CSDN
                     <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
@@ -88,7 +119,8 @@
 <script setup>
 import { useBlogSettingsStore } from '@/stores/blogsettings'
 import { initTooltips } from 'flowbite'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { getStatisticsInfo } from '@/api/frontend/statistics'
 
 // 初始化 Flowbit 组件
 onMounted(() => {
@@ -102,4 +134,11 @@ const jump = (url) => {
     // 在新窗口访问新的链接地址
     window.open(url, '_blank');
 } 
+// 统计信息(文章、分类、标签数量、总访问量)
+const statisticsInfo = ref({})
+getStatisticsInfo().then(res => {
+    if (res.success) {
+        statisticsInfo.value = res.data
+    }
+})
 </script>
