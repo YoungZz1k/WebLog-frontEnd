@@ -4,7 +4,7 @@
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <!-- 博客 LOGO 、博客名称 -->
                 <a href="/" class="flex items-center">
-                    <img :src="blogSettingsStore.blogSettings.logo" class="h-8 mr-3 rounded-full" alt="Flowbite Logo" />
+                    <img :src="blogSettingsStore.blogSettings.logo" class="h-8 mr-3 rounded-full" alt="Weblog Logo" />
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{
                         blogSettingsStore.blogSettings.name }}</span>
                 </a>
@@ -179,13 +179,18 @@
                             class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                <div v-if="searchLoading" role="status">
+        <svg aria-hidden="true" class="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+        <span class="sr-only">Loading...</span>
+    </div>
+
+                                <svg v-else class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div>
-                            <input type="search" id="search" ref="searchInputRef"
+                            <input type="search" id="search" ref="searchInputRef" v-model="searchWord"
                                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="请输入关键词搜索..." required>
                         </div>
@@ -206,63 +211,44 @@
                 <div class="p-4 md:p-5 space-y-4">
                     <div v-if="searchArticles && searchArticles.length > 0">
                         <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        共搜索到 2 篇相关文章
+                            共搜索到 {{ total }} 篇相关文章
                     </p>
                     <ol class="mt-3 divide-y divider-gray-200 dark:divide-gray-700">
-                        <li><a
-                                class="items-center block p-3 sm:flex hover:bg-gray-100 hover:rounded-lg dark:hover:bg-gray-700"><img
-                                    class="w-24 h-12 mb-3 mr-3 rounded-lg sm:mb-0"
-                                    src="https://img.quanxiaoha.com/quanxiaoha/193dd1504ebb4f138085acb23619e0dd.jpg">
+                        <li v-for="(article, index) in searchArticles" :key="index">
+                            <a @click="jumpToArticleDetailPage(article.id)" class="items-center cursor-pointer block p-3 sm:flex hover:bg-gray-100 hover:rounded-lg dark:hover:bg-gray-700">
+                                <img class="w-24 h-full mb-3 mr-3 rounded-lg sm:mb-0"
+                                    :src="article.cover">
                                 <div class="text-gray-600 dark:text-gray-400">
-                                    <h2 class="text-base font-normal text-gray-900">从零手撸前后端分离博客（已更新19w+字）</h2><span
-                                        class="inline-flex items-center text-xs font-normal text-gray-500 dark:text-gray-400"><svg
-                                            class="inline w-2.5 h-2.5 mr-2 text-gray-400 dark:text-white" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <h2 class="text-base font-normal text-gray-900" v-html="article.title"></h2>
+                                    <span
+                                        class="inline-flex items-center text-xs font-normal text-gray-500 dark:text-gray-400">
+                                        <svg class="inline w-2.5 h-2.5 mr-2 text-gray-400 dark:text-white"
+                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                                 stroke-width="2"
                                                 d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z">
                                             </path>
-                                        </svg> 2023-10-17</span>
-                                </div>
-                            </a></li>
-                        <li><a
-                                class="items-center block p-3 sm:flex hover:bg-gray-100 hover:rounded-lg dark:hover:bg-gray-700"><img
-                                    class="w-24 h-12 mb-3 mr-3 rounded-lg sm:mb-0"
-                                    src="https://img.quanxiaoha.com/quanxiaoha/193dd1504ebb4f138085acb23619e0dd.jpg">
-                                <div class="text-gray-600 dark:text-gray-400">
-                                    <h2 class="text-base font-normal text-gray-900">测试</h2><span
-                                        class="inline-flex items-center text-xs font-normal text-gray-500 dark:text-gray-400"><svg
-                                            class="inline w-2.5 h-2.5 mr-2 text-gray-400 dark:text-white" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z">
-                                            </path>
-                                        </svg> 2023-10-14</span>
+                                        </svg> {{ article.createDate }}</span>
                                 </div>
                             </a></li>
                     </ol>
 
                     <!-- 分页 -->
                     <div class="flex mt-7">
-                        <a
-                            class="flex items-center justify-center px-3 h-8 me-3 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 5H1m0 0 4 4M1 5l4-4" />
-                            </svg>
-                        </a>
+  <a v-if="current > 1" @click="prePage" 
+    class="flex items-center justify-center px-3 h-8 me-3 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+    </svg>
+  </a>
 
-                        <a
-                            class="flex ml-auto items-center justify-center px-3 h-8 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
-                            </svg>
-                        </a>
-                    </div>
+  <a v-if="current < pages" @click="nextPage" class="flex ml-auto items-center justify-center px-3 h-8 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+    </svg>
+  </a>
+</div>
                     </div>
                     <!-- 未搜索到结果提示 -->
                     <div v-else class="flex items-center justify-center flex-col mb-10">
@@ -286,12 +272,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, onBeforeUnmount } from 'vue'
+import { onMounted, ref, onBeforeUnmount, watch } from 'vue'
 import { initCollapses, initDropdowns, initModals, Modal } from 'flowbite'
 import { useBlogSettingsStore } from '@/stores/blogsettings'
 import { useUserStore } from '@/stores/user'
 import { useRouter, useRoute } from 'vue-router'
 import { showMessage } from '@/composables/util'
+import { getArticleSearchPageList } from '@/api/frontend/search'
 
 const modalOptions = {
     placement: 'top-center', // 弹框位置
@@ -387,5 +374,63 @@ const clickSearchBtn = () => {
 }
 
 // 文章搜索结果
-const searchArticles = ref([{}])
+const searchArticles = ref([])
+// 当前页码，给了一个默认值 1
+const current = ref(1)
+// 总数据量，给了个默认值 0
+const total = ref(0)
+// 每页显示的数据量，给了个默认值 10
+const size = ref(10)
+// 总共多少页
+const pages = ref(0)
+// 搜索关键词
+const searchWord = ref('')
+
+// 搜索 Loading
+const searchLoading = ref(false)
+
+watch(searchWord, (newText, oldText) => {
+    console.log(`新值: ${newText}, 老值: ${oldText}`)
+    if (newText && newText !== oldText) { // 若搜索关键词不为空，且和之前的值不相同
+        renderSearchArticles({ current: current.value, size: size.value, word: newText })
+    } else if (newText == '') { // 搜索词为空
+        // 置空
+        searchArticles.value = []
+    }
+})
+
+// 请求后台检索接口
+function renderSearchArticles(data) {
+    // 显示加载 Loading
+    searchLoading.value = true
+    getArticleSearchPageList(data).then(res => {
+        console.log(res)
+        if (res.success) {
+            searchArticles.value = res.data
+            current.value = res.current
+            size.value = res.size
+            total.value = res.total
+            pages.value = res.pages
+        }
+    }).finally(() => searchLoading.value = false) // 隐藏加载 Loading
+}
+
+// 渲染下一页搜索结果
+const nextPage = () => {
+    renderSearchArticles({ current: current.value + 1, size: size.value, word: searchWord.value })
+}
+
+// 渲染上一页搜索结果
+const prePage = () => {
+    renderSearchArticles({ current: current.value - 1, size: size.value, word: searchWord.value })
+}
+
+// 点击搜索结果，跳转文章详情页
+const jumpToArticleDetailPage = (articleId) => {
+    // 隐藏搜索对话框
+    searchModal.value.hide()
+    // 路由跳转
+    router.push('/article/' + articleId)
+}
+
 </script>
