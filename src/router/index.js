@@ -128,10 +128,14 @@ const routes = [
 
 // 创建路由
 const router = createRouter({
-    // 指定路由的历史管理方式，hash 模式指的是 URL 的路径是通过 hash 符号（#）进行标识
-    history: createWebHashHistory(),
-    // routes: routes 的缩写
-    routes, 
+  // 指定路由的历史管理方式，hash 模式指的是 URL 的路径是通过 hash 符号（#）进行标识
+  history: createWebHashHistory(),
+  // routes: routes 的缩写
+  routes, 
+  // 每次切换路由后，页面滚动到顶部
+  scrollBehavior() {
+      return { top: 0 }
+  }
 })
 
 // 暴露出去
