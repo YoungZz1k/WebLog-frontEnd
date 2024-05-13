@@ -82,19 +82,19 @@
 
             </div>
 
-            <!-- 右边侧边栏，占用一列 -->
-            <aside class="col-span-4 md:col-span-1">
-                <div class="sticky top-[5.5rem]">
-                    <!-- 博主信息 -->
-                    <UserInfoCard></UserInfoCard>
+          <!-- 右边侧边栏，占用一列 -->
+          <aside class="col-span-4 md:col-span-1 animate__animated animate__fadeInUp">
+            <div class="sticky top-[5.5rem]">
+              <!-- 博主信息 -->
+              <UserInfoCard></UserInfoCard>
 
-                    <!-- 分类 -->
-                    <CategoryListCard></CategoryListCard>
+              <!-- 分类 -->
+              <CategoryListCard></CategoryListCard>
 
-                    <!-- 标签 -->
-                    <TagListCard></TagListCard>
-                </div>
-            </aside>
+              <!-- 标签 -->
+              <TagListCard></TagListCard>
+            </div>
+          </aside>
         </div>
 
     </main>
