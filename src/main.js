@@ -1,6 +1,7 @@
 import '@/assets/main.css'
 import 'animate.css';
 import 'nprogress/nprogress.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 import { createApp } from 'vue'
 // 引入全局状态管理 Pinia

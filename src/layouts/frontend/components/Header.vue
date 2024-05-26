@@ -314,7 +314,7 @@ const searchModal = ref(null)
 onMounted(() => {
     initCollapses();
     initDropdowns();
-    // initModals();
+    initModals();
 
     // 初始化
     const $modalElement = document.querySelector('#search-modal');
